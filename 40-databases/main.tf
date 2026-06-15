@@ -78,19 +78,19 @@ resource "terraform_data" "redis" {
   }
 }
 
-resource "aws_instance" "mysql" {
-  ami           = local.ami_id
-  instance_type = "t3.micro"
-  vpc_security_group_ids = [local.mysql_sg_id]
-  subnet_id = local.database_subnet_id
-   iam_instance_profile = "EC2RoleToFetchSSMParams"
-  tags = merge(
-    local.common_tags,
-    {
-        Name = "${var.project}-${var.environment}-mysql"
-    }
-  )
-}
+# resource "aws_instance" "mysql" {
+#   ami           = local.ami_id
+#   instance_type = "t3.micro"
+#   vpc_security_group_ids = [local.mysql_sg_id]
+#   subnet_id = local.database_subnet_id
+#    iam_instance_profile = "EC2RoleToFetchSSMParams"
+#   tags = merge(
+#     local.common_tags,
+#     {
+#         Name = "${var.project}-${var.environment}-mysql"
+#     }
+#   )
+# }
 
 resource "terraform_data" "mysql" {
   triggers_replace = [
@@ -193,4 +193,48 @@ resource "aws_route53_record" "rabbitmq" {
   ttl     = 1
   records = [aws_instance.rabbitmq.private_ip]
   allow_overwrite = true
+}
+
+
+resource "aws_instance" "mysql" {
+  ami                    = local.ami_id
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [local.mysql_sg_id]
+  subnet_id              = local.database_subnet_id
+
+  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "${var.project}-${var.environment}-mysql"
+    }
+  )
+}
+
+
+resource "aws_iam_role" "ssm_role" {
+  name = "EC2RoleToFetchSSMParams"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = "sts:AssumeRole"
+
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_readonly" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "EC2RoleToFetchSSMParams"
+  role = aws_iam_role.ssm_role.name
 }
