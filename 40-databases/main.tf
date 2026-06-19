@@ -202,7 +202,7 @@ resource "aws_instance" "mysql" {
   vpc_security_group_ids = [local.mysql_sg_id]
   subnet_id              = local.database_subnet_id
 
-  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+  # iam_instance_profile = aws_iam_instance_profile.ssm_profile.name # if in case create manually noo need refer this here 
 
   tags = merge(
     local.common_tags,
