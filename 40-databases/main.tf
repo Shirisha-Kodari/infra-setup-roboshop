@@ -213,10 +213,10 @@ resource "aws_instance" "mysql" {
 }
 
 
-resource "aws_iam_role" "ssm_role" {
-  name = "EC2RoleToFetchSSMParams"
+resource "aws_iam_role" "ssm_role" {  # create role 
+  name = "EC2RoleToFetchSSMParams"    # role name 
 
-  assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode({     #AWS EC2 instances are allowed to use this IAM role
     Version = "2012-10-17"
     Statement = [{
       Effect = "Allow"

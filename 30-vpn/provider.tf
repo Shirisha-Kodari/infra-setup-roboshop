@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "sr-remote-state-dev1"
+    bucket = "sr-devops-state-dev1"
     key    = "roboshop-dev-vpn"
     region = "us-east-1"
     encrypt      = true  
