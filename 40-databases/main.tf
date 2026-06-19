@@ -213,28 +213,28 @@ resource "aws_instance" "mysql" {
 }
 
 
-resource "aws_iam_role" "ssm_role" {  # create role 
-  name = "EC2RoleToFetchSSMParams"    # role name 
+# resource "aws_iam_role" "ssm_role" {  # create role 
+#   name = "EC2RoleToFetchSSMParams"    # role name 
 
-  assume_role_policy = jsonencode({     #AWS EC2 instances are allowed to use this IAM role
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "sts:AssumeRole"
+#   assume_role_policy = jsonencode({     #AWS EC2 instances are allowed to use this IAM role
+#     Version = "2012-10-17"
+#     Statement = [{
+#       Effect = "Allow"
+#       Action = "sts:AssumeRole"
 
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-    }]
-  })
-}
+#       Principal = {
+#         Service = "ec2.amazonaws.com"
+#       }
+#     }]
+#   })
+# }
 
-resource "aws_iam_role_policy_attachment" "ssm_readonly" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
+# resource "aws_iam_role_policy_attachment" "ssm_readonly" {
+#   role       = aws_iam_role.ssm_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+# }
 
-resource "aws_iam_instance_profile" "ssm_profile" {
-  name = "EC2RoleToFetchSSMParams"
-  role = aws_iam_role.ssm_role.name
-}
+# resource "aws_iam_instance_profile" "ssm_profile" {
+#   name = "EC2RoleToFetchSSMParams"
+#   role = aws_iam_role.ssm_role.name
+# }
